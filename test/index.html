@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebSocket Code Editor</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/websocket-json-stream@1.0.1/browser.js"></script>
+  </head>
+  <body>
+    <h1>WebSocket Code Editor</h1>
+    <div>
+      <label for="userId">User ID:</label>
+      <input type="text" id="userId" placeholder="Enter User ID" required />
+      <br />
+      <label for="roomId">Room ID:</label>
+      <input type="text" id="roomId" placeholder="Enter Room ID" required />
+      <br />
+      <button id="joinRoomBtn">Join Room</button>
+    </div>
+    <div id="output"></div>
+    <textarea id="editor" placeholder="Type your code here..."></textarea>
+
+    <script>
+      // Establish a connection to the server
+      const socket = io("http://localhost:5000"); // Update the URL if your server is running on a different address
+
+      // Handle connection events
+      socket.on("connect", () => {
+        console.log("Connected to the WebSocket server.");
+        document.getElementById("output").innerHTML += "<p>Connected to the server!</p>";
+      });
+
+      // Function to join a room
+      function joinRoom(roomId, userId) {
+        const joinRoomMessage = {
+          roomId: roomId,
+          user: { id: userId },
+        };
+
+        // Emit the join_room event to the server
+        socket.emit("join_room", joinRoomMessage);
+      }
+
+      // Button click event to join the room
+      document.getElementById("joinRoomBtn").onclick = () => {
+        const roomId = document.getElementById("roomId").value;
+        const userId = document.getElementById("userId").value;
+        joinRoom(roomId, userId);
+      };
+
+      // Listen for responses from the server
+      socket.on("room_joined", (data) => {
+        document.getElementById("output").innerHTML += `<p>Joined Room: ${JSON.stringify(data)}</p>`;
+      });
+
+      socket.on("user_joined", (data) => {
+        document.getElementById("output").innerHTML += `<p>User joined: ${data.user.id} at ${new Date(data.timestamp).toLocaleTimeString()}</p>`;
+      });
+
+      socket.on("user_left", (data) => {
+        document.getElementById("output").innerHTML += `<p>User left: ${data.userId} at ${new Date(data.timestamp).toLocaleTimeString()}</p>`;
+      });
+
+      socket.on("update", (op) => {
+        // Update the editor based on received operation
+        // This needs to integrate with your editor logic; for simplicity, just log the operation
+        console.log("Received update operation:", op);
+        // Here, you would normally apply the operation to the document editor
+      });
+
+      socket.on("error", (error) => {
+        document.getElementById("output").innerHTML += `<p>Error: ${JSON.stringify(error)}</p>`;
+      });
+      socket.on("update", (data) => {
+        document.getElementById("output").innerHTML += `<p>Update: ${JSON.stringify(data)}</p>`;
+      });
+      // Handle document update
+      document.getElementById("editor").addEventListener("input", (event) => {
+        const content = event.target.value;
+
+        // Emit the update event with the content (you may want to implement an operation instead)
+        const op = content;
+        socket.emit("update", op);
+      });
+
+      // Handle disconnection
+      socket.on("disconnect", () => {
+        console.log("Disconnected from the WebSocket server.");
+        document.getElementById("output").innerHTML += "<p>Disconnected from the server.</p>";
+      });
+    </script>
+  </body>
+</html>

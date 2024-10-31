@@ -1,0 +1,40 @@
+{
+  "dependencies": {
+    "@prisma/client": "^5.21.1",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
+    "connect-mongo": "^5.1.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "mongodb": "^6.10.0",
+    "mongoose": "^8.7.3",
+    "nodemon": "^3.1.7",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-local": "^1.0.0",
+    "prisma": "^5.21.1",
+    "reconnecting-websocket": "^4.4.0",
+    "sharedb": "^5.1.1",
+    "sharedb-mongo": "^5.0.0",
+    "socket.io": "^4.8.1",
+    "websocket-json-stream": "^0.0.3",
+    "ws": "^8.18.0"
+  },
+  "type": "module",
+  "name": "code_editor",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server/app.js",
+    "dev": "nodemon server/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

@@ -1,0 +1,42 @@
+datasource db {
+  provider = "mongodb" 
+  url      = env("DATABASE_URL")  
+}
+
+generator client {
+  provider = "prisma-client-js" 
+}
+
+model User {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  email       String   @unique
+  password    String?
+  name        String?
+  googleId    String?
+  ownedroom   String[] @db.ObjectId 
+  sharedroom  String[] @db.ObjectId 
+}
+
+model room {
+  id          String      @id @map("_id")// Unique identifier mapped to MongoDB's _id
+  owner       String      @db.ObjectId // Id of the owner user
+  title       String      @default("Untitled room") @map("title") // Room title
+  type        String      @default("http://sharejs.org/types/JSONv0") @map("_type") 
+  content     String      @default("") 
+
+  accessType  AccessType  @default(PRIVATE) // Default access level
+  viewers     String[]    @default([]) @db.ObjectId // Array of viewer user IDs
+  editors     String[]    @default([]) @db.ObjectId // Array of editor user IDs
+  modifiers   String[]    @default([]) @db.ObjectId // Array of modifier user IDs
+
+  version     Int         @default(0) @map("_v") // Version field
+  metadata    Json        @default("{}") @map("_m") // Metadata field for storing creation time, modification time
+  opsId       String      @default("") @map("_o") // Operation ID for tracking document modifications
+}
+
+enum AccessType {
+  PRIVATE
+  SHARED
+  PUBLIC
+}
+
